@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'lab.processor'
+group = 'oyh.lab'
 version = '1.0.0'
 
 repositories {
@@ -16,6 +16,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
-test {
-    useJUnitPlatform()
+sourceSets {
+
 }
