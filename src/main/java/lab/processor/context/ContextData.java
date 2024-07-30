@@ -3,6 +3,7 @@ package lab.processor.context;
 import lab.processor.core.Instruction;
 import lab.processor.core.Service;
 import lab.processor.provider.ResourceProvider;
+import lab.processor.util.MessageUtil;
 import lab.processor.util.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,10 +26,11 @@ public class ContextData {
         this.instruction = instruction;
         startTime = new Date();
         serviceTrace = new ArrayList<>();
+        errorTrace = new LinkedHashMap<>();
         contextParams = new HashMap<>();
     }
 
-    public void addServiceTrace(Class<? extends Service> service) throws IllegalArgumentException {
+    public void addServiceTrace(Class<? extends Service> service) {
         serviceTrace.add(service);
     }
 
@@ -41,6 +43,26 @@ public class ContextData {
         if (!sb.isEmpty()) {
             sb.setLength(sb.length() - 1);
         }
+        return sb.toString();
+    }
+
+    public void addErrorTrace(Class<? extends Service> service, Throwable throwable) {
+        errorTrace.put(service, throwable);
+    }
+
+    public String getErrorTraceMessage() {
+        StringBuilder sb = new StringBuilder();
+        for (Class service : errorTrace.keySet()) {
+            Throwable throwable = errorTrace.get(service);
+            sb.append("Error class: ");
+            sb.append(service.getName());
+            sb.append("\n");
+            sb.append("Error trace: ");
+            sb.append(MessageUtil.toStringBuf(throwable));
+            sb.append("\n");
+        }
+        if (!sb.isEmpty())
+            sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 

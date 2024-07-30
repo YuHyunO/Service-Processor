@@ -14,8 +14,11 @@ public class ServiceProcessor {
         if (contextData == null)
             throw new IllegalArgumentException("ContextData is null");
 
+        Instruction instruction = contextData.getInstruction();
         String operationId = contextData.getOperationId();
-        String processId = contextData.getInstruction().getProcessId();
+        String instructionId = instruction.getInstructionId();
+        String processId = instruction.getProcessId();
+        String errorHandlerId = instruction.getErrorHandlerId();
 
         List<Service> services = ResourceProvider.access().getServices(processId);
         if (services == null || services.isEmpty()) {
@@ -35,12 +38,31 @@ public class ServiceProcessor {
                     break;
                 }
             } catch (Throwable t) {
+                contextData.addErrorTrace(service.getClass(), t);
+                if (instruction.isIgnoreError()) {
+                    log.warn("[{}]An error occurred at the service '{}' but ignored.", operationId, service.getClass());
+                    continue;
+                }
+                List<ErrorHandler> errorHandlers = ResourceProvider.access().getErrorHandlers(errorHandlerId);
+                if (errorHandlers == null || errorHandlers.isEmpty()) {
+                    log.warn("[{}]Error handler for instruction '{}' is not exist. Skip error handling", operationId, instructionId);
+                    break;
+                }
+                for (ErrorHandler errorHandler : errorHandlers) {
+                    try {
+                        errorHandler.handleError(contextData);
+                    } catch (Throwable it) {
+                        log.error("[" + operationId + "]An error occurred when handling error. Error handler id:'" + errorHandlerId + "', Error handler class: '" + errorHandler.getClass() + "'"
+                                + "Continue error handling process.", it);
+                    }
+                }
 
             } finally {
                 sw.split();
                 log.debug("[{}]End the service '{}'", operationId, service.getClass());
             }
         }
+
         sw.stop();
 
         return contextData;
