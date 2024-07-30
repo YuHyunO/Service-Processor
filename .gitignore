@@ -27,3 +27,4 @@ bin/
 /.idea/
 **/*.xml
 **/TestStarter.*
+test/
