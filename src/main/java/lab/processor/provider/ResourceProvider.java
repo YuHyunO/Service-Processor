@@ -9,15 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SplittableRandom;
+import java.util.random.RandomGenerator;
 
 @Slf4j
 public class ResourceProvider {
 
+    private static ResourceProvider instance;
     private Map<String, Instruction> instructions;
     private Map<String, List<Service>> services;
     private Map<String, List<ErrorHandler>> errorHandlers;
-    private static ResourceProvider instance;
-    public static final SplittableRandom RANDOM_SUPPORTER = new SplittableRandom();
+    public RandomGenerator randomGenerator = new SplittableRandom();
 
     private ResourceProvider(){
         if (ResourceProvider.instance == null) {
@@ -37,7 +38,6 @@ public class ResourceProvider {
         }
         return ResourceProvider.instance;
     }
-
 
     public void setInstructions(List<Instruction> instructions){
         for(Instruction instruction : instructions){
@@ -82,6 +82,16 @@ public class ResourceProvider {
 
     public List<ErrorHandler> getErrorHandlersByInstrId(String instructionId){
         return errorHandlers.get(getInstruction(instructionId).getInstructionId());
+    }
+
+    public void setRandomGenerator(RandomGenerator randomGenerator){
+        if (randomGenerator == null)
+            throw new IllegalArgumentException("Random generator cannot be null");
+        this.randomGenerator = randomGenerator;
+    }
+
+    public RandomGenerator getRandomGenerator() {
+        return randomGenerator;
     }
 
 }
