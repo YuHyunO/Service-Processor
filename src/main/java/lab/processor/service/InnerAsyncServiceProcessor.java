@@ -91,6 +91,7 @@ public class InnerAsyncServiceProcessor implements Service {
                         }
                     }
                 } finally {
+                    contextData.stampEndTime();
                     log.debug("[InnerAsync][{}]End the service '{}'", operationId, service.getClass());
                 }
             }
