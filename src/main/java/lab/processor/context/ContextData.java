@@ -71,16 +71,16 @@ public class ContextData {
     }
 
     public String getOperationId() {
-        if (operationId == null) {
-            return getOperationId();
-        }
+        if (operationId == null)
+            return generateOperationId(instruction, startTime);
+
         return operationId;
     }
 
     private String generateOperationId(Instruction instruction, Date startTime) {
         StringBuilder operIdBd = new StringBuilder();
         StringBuilder randomBd = new StringBuilder();
-        int randomNum = ResourceProvider.RANDOM_SUPPORTER.nextInt( 999);
+        int randomNum = ResourceProvider.access().getRandomGenerator().nextInt( 999);
         if (randomNum < 0)
             randomNum *= -1;
         if (randomNum < 100) {
