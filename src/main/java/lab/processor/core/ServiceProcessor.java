@@ -5,6 +5,7 @@ import lab.processor.provider.ResourceProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -78,6 +79,8 @@ public class ServiceProcessor {
                 }
             } finally {
                 sw.split();
+                //* Set the end time at each end of service
+                contextData.stampEndTime();
                 log.debug("[{}]End the service '{}'", operationId, service.getClass());
             }
         }
