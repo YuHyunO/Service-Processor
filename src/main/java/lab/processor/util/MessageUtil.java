@@ -9,6 +9,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,8 +58,22 @@ public class MessageUtil {
         if (prettyFormat) {
             xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
-        rootName = rootName != null ? rootName : "data";
-        return xmlMapper.writer().withRootName(rootName).writeValueAsString(map);
+
+        if (rootName == null || rootName.isEmpty()) {
+            List<Object> keyList = new ArrayList<>(map.keySet());
+            String root = "data";
+            if (keyList.size() == 1) {
+                Object key = keyList.get(0);
+                Object value = map.get(key);
+                if (key instanceof String) {
+                    root = String.valueOf(key);
+                }
+                return xmlMapper.writer().withRootName(root).writeValueAsString(value);
+            }
+            return xmlMapper.writer().withRootName(root).writeValueAsString(map);
+        } else {
+            return xmlMapper.writer().withRootName(rootName).writeValueAsString(map);
+        }
     }
 
 }
