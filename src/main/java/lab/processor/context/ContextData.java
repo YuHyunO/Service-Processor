@@ -13,14 +13,13 @@ import java.util.*;
 @Getter
 public class ContextData {
     private final Instruction instruction;
-    @Setter private boolean processOn = true;
-    private String operationId;
-    private Date startTime;
-    private Date endTime;
-    @Setter private Throwable throwable;
-    private List<Class<? extends Service>> serviceTrace;
-    private Map<Class<? extends Service>, Throwable> errorTrace;
-    private Map<String, Objects> contextParams;
+    @Setter protected boolean processOn = true;
+    protected String operationId;
+    protected Date startTime;
+    protected Date endTime;
+    protected List<Class<? extends Service>> serviceTrace;
+    protected Map<Class<? extends Service>, Throwable> errorTrace;
+    protected Map<String, Objects> contextParams;
 
     public ContextData(Instruction instruction) {
         this.instruction = instruction;
@@ -46,8 +45,8 @@ public class ContextData {
         return sb.toString();
     }
 
-    public void addErrorTrace(Class<? extends Service> service, Throwable throwable) {
-        errorTrace.put(service, throwable);
+    public void addErrorTrace(Class<? extends Service> errorService, Throwable throwable) {
+        errorTrace.put(errorService, throwable);
     }
 
     public String getErrorTraceMessage() {
